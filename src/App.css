@@ -1,0 +1,89 @@
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+@import "tailwindcss";
+@import "tw-animate-css";
+
+
+
+@font-face {
+  font-family: 'gg sans';
+  src: url('/src/assets/fonts/ggsans/ggsansvf-VF.woff2') format('woff2');
+  font-weight: 100 900; /* supports all weights in one file */
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'gg sans';
+  src: url('/src/assets/fonts/ggsans/ggsansvf-Italic-VF.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: italic;
+}
+
+/* Apply globally */
+* {
+  font-family: 'gg sans', sans-serif;
+  font-weight: 100 900;
+}
+
+body {
+  height: 100vh;
+  background: #2c2d32;
+  color: #dfe0e2;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+@theme {
+  --color-base: #2c2d32;
+  --color-base-border: #404147;
+  --color-content: #323338;
+  --color-light-hover: #36373b;
+  --color-dropdown: #3d3d44;
+  --color-dark-hover: #44444c;
+  --color-button-hover: #36373c;
+  --color-dropdown-bg: #3c3e45;
+  --color-dropdown-border: #484951;
+  --color-dropdown-icons: #c4c5c9;
+  --color-dropdown-hover: #34353a;
+  --color-input-bg: #28292d;
+  --color-text-box: #36373d;
+  --color-icon-grey: #9b9ca2;
+  --color-logo-hover: #5765f1;
+}

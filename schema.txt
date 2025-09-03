@@ -1,0 +1,112 @@
+========================
+ENTITIES (Minimal)
+========================
+
+profiles
+- id: uuid (Primary Key)              // same as auth.users.id
+- username: text? (unique)
+- avatar_url: text?
+- created_at: timestamp
+
+servers
+- id: uuid (Primary Key)
+- name: text (required)
+- owner_id: uuid -> profiles.id
+- icon_url: text?
+- created_at: timestamp
+
+server_members
+- server_id: uuid -> servers.id
+- user_id: uuid -> profiles.id
+- role: 'owner' | 'admin' | 'member' (default 'member')
+- created_at: timestamp
+PRIMARY KEY (server_id, user_id)
+
+channels
+- id: uuid (Primary Key)
+- server_id: uuid -> servers.id
+- name: text (required)
+- type: 'text' | 'voice'
+- position: int (default 0)   // UI order
+- created_at: timestamp
+UNIQUE (server_id, name)
+INDEX (server_id, position)
+
+messages
+- id: uuid (Primary Key)
+- channel_id: uuid -> channels.id
+- user_id: uuid -> profiles.id
+- content: text (required)
+- created_at: timestamp
+INDEX (channel_id, created_at)
+
+------------------------
+OPTIONAL (nice to have)
+------------------------
+invites
+- code: text (Primary Key or UNIQUE)
+- server_id: uuid -> servers.id
+- expires_at: timestamp?
+- max_uses: int? / uses_count: int (default 0)
+- created_at: timestamp
+
+attachments (if you add file uploads)
+- id: uuid (Primary Key)
+- message_id: uuid -> messages.id
+- file_url: text
+- created_at: timestamp
+
+========================
+RELATIONSHIPS
+========================
+profiles 1<->1 auth.users (same id)
+profiles 1<->N servers (owner_id)
+servers  1<->N server_members (per user)
+servers  1<->N channels
+channels 1<->N messages
+profiles 1<->N messages (author)
+
+========================
+TRIGGERS (conceptual)
+========================
+on auth.users INSERT:
+  -> insert blank row into profiles (id = new user id)
+
+on servers INSERT:
+  -> insert into server_members (server_id, owner_id, role='owner')
+
+========================
+RLS (Row-Level Security) — SIMPLE RULES
+========================
+profiles:
+  - SELECT/UPDATE: only where id = auth.uid()
+  - (Optional) allow reading profiles of users who share a server with auth.uid()
+
+servers:
+  - SELECT: owner OR any row where auth.uid() is a member (server_members)
+  - INSERT: only if owner_id = auth.uid()
+  - UPDATE/DELETE: only if owner_id = auth.uid()
+
+server_members:
+  - SELECT: members can read their own membership
+  - INSERT: user can join self (user_id = auth.uid())
+  - DELETE: user can leave self (user_id = auth.uid())
+  - (Optional) owners/admins can SELECT all members of their servers
+
+channels:
+  - SELECT: only if auth.uid() is a member of that server
+  - INSERT/UPDATE/DELETE: only if auth.uid() is owner/admin of that server
+
+messages:
+  - SELECT: only if auth.uid() is a member of the server that owns the channel
+  - INSERT: only if auth.uid() is a member; user_id must equal auth.uid()
+  - UPDATE/DELETE: only if user_id = auth.uid()
+
+========================
+NOTES / TODO
+========================
+- TODO: categories for channels (table: channel_categories with position; channels link to category_id)
+- TODO: reactions (message_reactions table)
+- TODO: storage buckets for avatars/server icons/attachments
+- TODO: richer roles/permissions if needed
+- TODO: invite flows (validate code, expiry, max uses) before inserting server_members
