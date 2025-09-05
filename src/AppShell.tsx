@@ -1,9 +1,10 @@
 // src/AppShell.tsx
 import TopBar from "./components/TopBar";
 import ServerIconRail from "./components/ServerIconRail";
-import ChannelsPanel from "./components/main/ChannelsPanel";
-import ContentArea from "./components/main/content/ContentArea";
+import ChannelsPanel from "./components/servers/ChannelsPanel";
+import ContentArea from "./components/servers/content/ContentArea";
 import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
 import AuthInfo from "./debug/AuthInfo";
 
 export default function AppShell({ serverId }: { serverId: string | null }) {
@@ -48,3 +49,11 @@ export default function AppShell({ serverId }: { serverId: string | null }) {
     </main>
   );
 }
+
+async function getServerCount() {
+  const { count, error } = await supabase
+    .from("servers")
+    .select("id", { count: "exact", head: true });
+  if (error) throw error;
+  return count ?? 0;
+} 

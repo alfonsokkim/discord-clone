@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import ToolbarSearch from "@/components/main/ToolbarSearch";
-import UsersPanel from "@/components/main/UsersPanel";
+import ToolbarSearch from "@/components/servers/ToolbarSearch";
+import UsersPanel from "@/components/servers/UsersPanel";
 import MessageComposer from "./MessageComposer";
 import { Hash, Spool, Bell, Pin, Users } from 'lucide-react';
 

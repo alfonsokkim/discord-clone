@@ -16,7 +16,7 @@ export default function AppIndexRedirect() {
         navigate(`/app/${data[0].id}`, { replace: true });
       } else {
         // No servers yet — maybe show a create screen
-        navigate("/app/onboarding", { replace: true });
+        navigate("/app/blank", { replace: true });
       }
     })();
   }, [navigate]);
