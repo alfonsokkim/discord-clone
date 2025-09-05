@@ -7,11 +7,13 @@ import { Hash, Spool, Bell, Pin, Users } from 'lucide-react';
 type ContentAreaProps = {
   textChannel: string;
   showRightSidebar?: boolean;
+  serverId: string | null;
 };
 
 export default function ContentArea({
   textChannel,
-  showRightSidebar = true
+  showRightSidebar = true,
+  serverId
 }: ContentAreaProps) {
   const [isUsersOpen, setIsUsersOpen] = useState(showRightSidebar);
 
@@ -62,7 +64,7 @@ export default function ContentArea({
           <MessageComposer placeholder={`Message #${textChannel}`} />
         </div>
 
-        {isUsersOpen && <UsersPanel />}
+        {isUsersOpen && <UsersPanel serverId={serverId}/>}
       </div>
     </div>
   );

@@ -4,8 +4,9 @@ import ServerIconRail from "./components/ServerIconRail";
 import ChannelsPanel from "./components/main/ChannelsPanel";
 import ContentArea from "./components/main/content/ContentArea";
 import { useEffect, useState } from "react";
+import AuthInfo from "./debug/AuthInfo";
 
-export default function AppShell() {
+export default function AppShell({ serverId }: { serverId: string | null }) {
   const serverName = "WEEWOO.'s server";
   const textChannels = ["general", "text1"];
   const voiceChannels = ["General", "voice1"];
@@ -38,7 +39,11 @@ export default function AppShell() {
           </div>
         </div>
 
-        <ContentArea textChannel={selectedChannel} showRightSidebar />
+        <ContentArea textChannel={selectedChannel} showRightSidebar serverId={serverId} />
+        <div className="p-2">
+          {/* vvv Debug check fields for user info*/}
+          {/* <AuthInfo /> */}
+        </div>
       </div>
     </main>
   );

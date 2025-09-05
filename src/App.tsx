@@ -1,48 +1,49 @@
-import { useEffect, useState } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabaseClient";
 import AppShell from "./AppShell";
+import { useParams } from "react-router-dom";
 
 export default function App() {
-  const [checking, setChecking] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<Session | null>(null);
-  const location = useLocation();
+  const exchanged = useRef(false);
+  const { serverId } = useParams<{ serverId: string }>();
+  if (!serverId) return null;
 
   useEffect(() => {
-    let mounted = true;
-
     (async () => {
-      // 1) If we came back from Discord (/app?code=...), exchange it
-      if (window.location.search.includes("code=")) {
-        const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
-        if (!error) {
-          // Clean URL: /app
+      try {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has("code") && !exchanged.current) {
+          exchanged.current = true;
+          const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
+          if (error) throw error;
+          // Clean URL
           window.history.replaceState({}, document.title, "/app");
-        } else {
-          console.error(error);
         }
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        setSession(session ?? null);
+      } catch (e) {
+        console.error("auth flow error:", e);
+        setSession(null);
+      } finally {
+        setLoading(false);
       }
-
-      // 2) Read current session
-      const { data: { session } } = await supabase.auth.getSession();
-      if (mounted) setSession(session ?? null);
-      if (mounted) setChecking(false);
     })();
-
-    // 3) Keep session in sync (logout/login elsewhere)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
-      if (!mounted) return;
-      setSession(s);
-    });
-
-    return () => {
-      mounted = false;
-      subscription?.unsubscribe();
-    };
   }, []);
 
-  if (checking) return null;
-  if (!session) return <Navigate to="/login" replace state={{ from: location }} />;
-  return <AppShell />;
+  if (loading) return null;
+
+  if (!session) {
+    // Not signed in, simple link back to login
+    return (
+      <div style={{ padding: 24 }}>
+        <a href="/login">Go to Login</a>
+      </div>
+    );
+  }
+
+  return (<AppShell serverId={serverId}/>);
 }

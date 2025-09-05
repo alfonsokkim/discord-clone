@@ -78,7 +78,7 @@ export function Section({
               type="button"
               className="p-1 text-icon-grey hover:text-white transition-colors"
               aria-label="Add channel"
-              onPointerDown={(e) => e.stopPropagation()} // prevent DnD grab
+              onPointerDown={(e) => e.stopPropagation()}
             >
               <Plus size={15} />
             </button>

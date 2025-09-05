@@ -16,7 +16,6 @@ export default function ChannelsPanel({ serverName, textChannels, voiceChannels 
       </div>
 
       <div className="flex flex-col divide-y divide-base-border p-3">
-        {/* Quick actions */}
         <div className="flex flex-col pb-1.5 gap-0.5">
           <div className="items-center p-1.5 flex gap-2 hover:bg-dropdown-hover hover:text-white text-icon-grey rounded-xl cursor-pointer">
             <CalendarDays size={20} />
@@ -30,8 +29,8 @@ export default function ChannelsPanel({ serverName, textChannels, voiceChannels 
 
         {/* Channels (sortable) */}
         <ChannelListsDnD
-          textChannels={textChannels}   // seed with your current value
-          voiceChannels={voiceChannels}    // seed as you like
+          textChannels={textChannels}
+          voiceChannels={voiceChannels}
         />
       </div>
     </div>
